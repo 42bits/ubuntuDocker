@@ -35,7 +35,8 @@ RUN cd /; mkdir -p soft;cd soft
 #RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
 #RUN cp sources.list /etc/apt/
 
-RUN apt-get update;apt-get install gcc automake autoconf libtool make build-essential zip vim wget git
+RUN apt-get update
+RUN apt-get install gcc automake autoconf libtool make build-essential zip vim wget git
 
 #可以先下载文件到本地,然后关联进来,为Dockerfile所在目录的相对路径
 #COPY ["soft/", "/soft"]
