@@ -67,6 +67,7 @@ RUN cd /; mkdir -p soft;cd soft
 
 
 #更新源安装必须软件
+
 RUN apt-get update
 
 RUN apt-get install gcc automake autoconf libtool make cmake libncurses5-dev build-essential zip vim wget git
@@ -93,12 +94,14 @@ RUN wget https://www.openssl.org/source/openssl-1.0.2k.tar.gz
 
 
 #redis相关
+
 RUN wget http://download.redis.io/releases/redis-3.2.1.tar.gz
 
 
 #golang相关
 
 RUN wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
+
 RUN wget http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.tar.gz
 
 
@@ -157,69 +160,94 @@ RUN make & make install
 #编译redis
 
 RUN tar zxf redis-3.2.1.tar.gz
+
 RUN cd redis-3.2.1.tar
+
 RUN make
+
 RUN cd /soft/redis-3.2.1/src/;cp mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-rdb redis-cli redis-sentinel redis-server redis-trib.rb /usr/local/redis/sbin/
+
 RUN cd cd /soft/redis-3.2.1;cp redis.conf /usr/local/redis/etc/
 
 #如果不行只能放在shell脚本里随应用启动时一起修改
+
 RUN echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
 
 
 
 #编译golang
+
 RUN tar zxf go1.8.linux-amd64.tar.gz
+
 RUN cd go;cp * /usr/local/go/
 
 #GOPATH可以挂外卷,用宿主本地的开发目录
+
 #ENV export GOROOT=/usr/local/go  
+
 #ENV export GOPATH=/work/golang
+
 #ENV export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 #可以使用上面也可以写入系统文件
+
 RUN echo 'export GOROOT=/usr/local/go' >> /etc/profile
+
 RUN echo 'export GOPATH=/work/golang' >> /etc/profile
+
 RUN echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /etc/profile
+
 RUN source  /etc/profile
 
 
 
-#编译mysql
-#如果编译错误 make clean;rm CMakeCache.txt
+#编译mysql如果编译错误 make clean;rm CMakeCache.txt
 
 RUN tar zxf mysql-boost-5.7.17.tar.gz
+
 RUN cd mysql-5.7.17
+
 RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306  -DSYSCONFDIR=/usr/local/mysql5.6/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_UNIX_ADDR=/tmp/mysql/mysqld.sock -DEXTRA_CHARSETS=all -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DWITH_SSL:STRING=bundled -DWITH_ZLIB:STRING=bundled  -DENABLE_DOWNLOADS=1 -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/tmp/mysql
+
 RUN make & make install
+
 RUN /usr/local/mysql/script/mysql_install_db --user=mysql --basedir=/usr/local/mysql5.6 --datadir=/data/mysql --defaults-extra-file=/usr/local/mysql5.6/etc/my.cnf --pid-file=/data/mysql/mysql.pid
 
 #编译php
 
 RUN tar zxf php-7.1.3.tar.gz
+
 RUN cd php-7.1.3
 
 
 #编译php扩展
 
 RUN unzip yaf-3.0.4.zip
+
 RUN cd yaf-3.0.4
 
 RUN tar zxf yac-2.0.1.tar.gz
+
 RUN cd yac-2.0.1
 
 RUN tar zxf yaconf-1.0.4.tar.gz
+
 RUN cd yaconf-1.0.4
 
 RUN tar zxf msgpack-2.0.2.tar.gz
+
 RUN cd msgpack-2.0.2
 
 RUN tar zxf yar-2.0.2.tar.gz
+
 RUN cd yar-2.0.2
 
 RUN tar zxf taint-2.0.2.tar.gz
+
 RUN cd taint-2.0.2
 
 RUN unzip v2.0.7.zip
+
 RUN cd v2.0.7
 
 
