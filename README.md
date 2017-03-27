@@ -18,9 +18,31 @@ EXPORT 6379
 
 
 
+#可以修改源,安装必须软件
+
+RUN apt-get update
+
+RUN apt-get wget
+
+RUN wget http://mirrors.163.com/.help/sources.list.wheezy
+
+RUN mv sources.list.wheezy sources.list
+
+RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
+
+RUN cp sources.list /etc/apt/
+
+RUN apt-get update ; apt-get upgrade
+
+RUN apt-get install zip vim git 
+
+RUN apt-get install gcc automake autoconf libtool make cmake libncurses5-dev build-essential
+
+RUN apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev pkg-config libsslcommon2-dev libbz2-dev libjpeg8-dev libpng12-dev libfreetype6-dev libmcrypt-dev psmisc
 
 
-#添加用户(www-data 好像已经有了)
+
+#添加用户(www-data 好像已经有了),创建目录
 
 #RUN groupadd www-data
 
@@ -30,13 +52,7 @@ RUN groupadd mysql
 
 RUN useradd -r mysql -g mysql
 
-
-
-
-
-#创建目录
-
-RUN cd /usr/local; mkdir -p tengine;mkdir -p mysql;mkdir -p php;mkdir -p redis/sbin;mkdir -p redis/etc;mkdir -p go
+RUN cd /usr/local;mkdir -p tengine ; mkdir -p mysql ; mkdir -p php ; mkdir -p redis/sbin ; mkdir -p redis/etc ; mkdir -p go
 
 RUN cd /home; mkdir -p nginx-lib
 
@@ -46,88 +62,60 @@ RUN cd /data; chown -R mysql:mysql mysql/;chmod -R 700 mysql/
 
 RUN cd /tmp; mkdir -p mysql;chown -R mysql:mysql mysql/
 
-RUN cd /var/log/; mkdir -p redis;mkdir -p php;mkdir -p mysql;chown -R mysql:mysql mysql/
+RUN cd /var/log/; mkdir -p redis;mkdir -p php;mkdir -p nginx;mkdir -p mysql;chown -R mysql:mysql mysql/
 
 RUN cd /; mkdir -p soft;cd soft
 
 
-
-
-
-#可以修改源
-
-#RUN wget http://mirrors.163.com/.help/sources.list.wily
-
-#RUN mv sources.list.wily sources.list
-
-#RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
-
-#RUN cp sources.list /etc/apt/
-
-
-
-#更新源安装必须软件
-
-RUN apt-get update
-
-RUN apt-get install gcc automake autoconf libtool make cmake libncurses5-dev build-essential zip vim wget git
-
-
-
-
-
-
 #可以先下载文件到本地,然后关联进来,为Dockerfile所在目录的相对路径
 
-#COPY ["soft/", "/soft"]
+COPY ["soft/", "/soft"]
 
 #nginx相关
 
-RUN wget http://tengine.taobao.org/download/tengine-2.2.0.tar.gz
+#RUN wget http://tengine.taobao.org/download/tengine-2.2.0.tar.gz
 
-RUN wget http://www.zlib.net/zlib-1.2.11.tar.gz
+#RUN wget http://www.zlib.net/zlib-1.2.11.tar.gz
 
-RUN wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.40.tar.gz
+#RUN wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.40.tar.gz
 
-RUN wget https://www.openssl.org/source/openssl-1.0.2k.tar.gz
+#RUN wget https://www.openssl.org/source/openssl-1.0.2k.tar.gz
 
 
 
 #redis相关
 
-RUN wget http://download.redis.io/releases/redis-3.2.1.tar.gz
+#RUN wget http://download.redis.io/releases/redis-3.2.1.tar.gz
 
 
 #golang相关
 
-RUN wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
-
-RUN wget http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.tar.gz
+#RUN wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
 
 
 #mysql相关
 
-RUN wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-boost-5.7.17.tar.gz
-
+#RUN wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-boost-5.7.17.tar.gz
+#RUN wget http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.tar.gz
 
 
 #php相关
 
-RUN wget http://jp2.php.net/distributions/php-7.1.3.tar.gz
+#RUN wget http://jp2.php.net/distributions/php-7.1.3.tar.gz
 
-RUN wget https://github.com/laruence/yaf/archive/yaf-3.0.4.zip
+#RUN wget https://github.com/laruence/yaf/archive/yaf-3.0.4.zip
 
-RUN wget https://github.com/laruence/yac/archive/yac-2.0.1.tar.gz
+#RUN wget https://github.com/laruence/yac/archive/yac-2.0.1.tar.gz
 
-RUN wget https://github.com/laruence/yaconf/archive/yaconf-1.0.4.tar.gz
+#RUN wget https://github.com/laruence/yaconf/archive/yaconf-1.0.4.tar.gz
 
-RUN wget https://github.com/msgpack/msgpack-php/archive/msgpack-2.0.2.tar.gz
+#RUN wget https://github.com/msgpack/msgpack-php/archive/msgpack-2.0.2.tar.gz
 
-RUN wget https://github.com/laruence/yar/archive/yar-2.0.2.tar.gz
+#RUN wget https://github.com/laruence/yar/archive/yar-2.0.2.tar.gz
 
-RUN wget https://github.com/laruence/taint/archive/taint-2.0.2.tar.gz
+#RUN wget https://github.com/laruence/taint/archive/taint-2.0.2.tar.gz
 
-RUN wget https://github.com/swoole/swoole-src/archive/v2.0.7.zip
+#RUN wget https://github.com/swoole/swoole-src/archive/v2.0.7.zip
 
 
 
@@ -145,6 +133,8 @@ RUN cd /home/nginx-lib;tar zxf zlib-1.2.11.tar.gz;tar zxf pcre-8.40.tar.gz;tar z
 
 #编译nginx
 
+RUN cd /soft
+
 RUN tar zxf tengine-2.2.0.tar.gz
 
 RUN cd /tengine-2.2.0
@@ -153,11 +143,13 @@ RUN ./configure --prefix=/usr/local/tengine --user=www-data --group=www-data --w
 
 #make 错误 执行make clean
 
-RUN make & make install
+RUN make && make install
 
 
 
 #编译redis
+
+RUN cd /soft
 
 RUN tar zxf redis-3.2.1.tar.gz
 
@@ -176,6 +168,8 @@ RUN echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
 
 
 #编译golang
+
+RUN cd /soft
 
 RUN tar zxf go1.8.linux-amd64.tar.gz
 
@@ -203,22 +197,49 @@ RUN source  /etc/profile
 
 #编译mysql如果编译错误 make clean;rm CMakeCache.txt
 
+RUN cd /soft
+
+RUN tar zxf mysql-boost-5.7.17.tar.gz
+
 RUN tar zxf mysql-boost-5.7.17.tar.gz
 
 RUN cd mysql-5.7.17
 
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306  -DSYSCONFDIR=/usr/local/mysql5.6/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_UNIX_ADDR=/tmp/mysql/mysqld.sock -DEXTRA_CHARSETS=all -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DWITH_SSL:STRING=bundled -DWITH_ZLIB:STRING=bundled  -DENABLE_DOWNLOADS=1 -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/tmp/mysql
+RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DSYSCONFDIR=/usr/local/mysql/etc  -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306  -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_UNIX_ADDR=/tmp/mysql/mysqld.sock -DEXTRA_CHARSETS=all -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DWITH_SSL:STRING=bundled -DWITH_ZLIB:STRING=bundled  -DENABLE_DOWNLOADS=1 -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/soft
 
-RUN make & make install
+RUN make && make install
 
-RUN /usr/local/mysql/script/mysql_install_db --user=mysql --basedir=/usr/local/mysql5.6 --datadir=/data/mysql --defaults-extra-file=/usr/local/mysql5.6/etc/my.cnf --pid-file=/data/mysql/mysql.pid
+RUN cd /usr/local/mysql;mkdir -p etc 
+
+RUN mv support-files/my-default.cnf etc/
+
+RUN cd etc && mv my-default.cnf my.cnf
+
+RUN /usr/local/mysql/bin/mysqld --basedir=/usr/local/mysql --datadir=/data/mysql --user=mysql --initialize-insecure
 
 #编译php
+
+RUN cd /soft
 
 RUN tar zxf php-7.1.3.tar.gz
 
 RUN cd php-7.1.3
 
+RUN ./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --with-zlib --enable-mbstring --with-openssl --enable-ftp --with-curl --with-gd --enable-gd-native-ttf  --with-mysqli=mysqlnd  --with-pdo-mysql=mysqlnd --enable-pdo --with-mysql-sock --enable-sockets --with-gettext --enable-bcmath --enable-xml --with-bz2 --enable-zip --enable-shmop --with-iconv --enable-mbregex --enable-pcntl --enable-sysvmsg --enable-sysvsem --enable-sysvshm --with-freetype-dir --with-jpeg-dir --with-png-dir --disable-fileinfo --with-mhash --enable-pcntl --with-mcrypt --enable-inline-optimization --enable-exif --disable-rpath 
+
+RUN make && make install
+
+RUN cp php.ini-production php.ini-development  /usr/local/php/etc/
+
+RUN cd /usr/local/php/etc
+
+RUN mv php-fpm.conf.default php-fpm.conf
+
+RUN mv php.ini-development php.ini
+
+RUN cd php-fpm.d
+ 
+RUN mv www.conf.default www.conf
 
 #编译php扩展
 
