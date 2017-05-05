@@ -184,15 +184,11 @@ RUN echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
 
 #编译golang
 
-WORKDIR ~/work
-
 WORKDIR /soft
 
 RUN tar zxf go1.8.linux-amd64.tar.gz
 
-WORKDIR go
-
-RUN cp . /usr/local/go/
+RUN cp -rf go/* /usr/local/go/
 
 #GOPATH可以挂外卷,用宿主本地的开发目录
 
@@ -210,7 +206,7 @@ RUN echo 'export GOPATH=/work/golang' >> /etc/profile
 
 RUN echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /etc/profile
 
-RUN source  /etc/profile
+RUN /bin/bash -c 'source  /etc/profile'
 
 
 
@@ -238,6 +234,8 @@ RUN cd etc && mv my-default.cnf my.cnf
 
 RUN /usr/local/mysql/bin/mysqld --basedir=/usr/local/mysql --datadir=/data/mysql --user=mysql --initialize-insecure
 
+
+
 #编译php
 
 WORKDIR /soft
@@ -261,7 +259,6 @@ RUN mv php.ini-development php.ini
 WORKDIR php-fpm.d
  
 RUN mv www.conf.default www.conf
-
 
 
 #编译php扩展
@@ -300,7 +297,6 @@ RUN mv www.conf.default www.conf
 
 #RUN cd 3.1.2
 
-WORKDIR ~
 
 
 

@@ -7,6 +7,8 @@ MAINTAINER jshawcx jshawcx@gmail.com
 
 EXPOSE 80
 
+EXPOSE 8000
+
 EXPOSE 8080
 
 EXPOSE 3360
@@ -75,46 +77,7 @@ RUN mkdir -p redis;mkdir -p php;mkdir -p nginx;mkdir -p mysql
 
 RUN chown -R mysql:mysql mysql
 
-
-#可以先下载文件到本地,然后关联进来,为Dockerfile所在目录的相对路径
-
-WORKDIR /soft
-
-#COPY . /soft
-
-
-
-#golang相关
-
-RUN wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
-
-
-#编译golang
-
-
-WORKDIR /soft
-
-RUN tar zxf go1.8.linux-amd64.tar.gz
-
-RUN cp -rf go/* /usr/local/go/
-
-#GOPATH可以挂外卷,用宿主本地的开发目录
-
-#ENV export GOROOT=/usr/local/go  
-
-#ENV export GOPATH=/work/golang
-
-#ENV export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-
-#可以使用上面也可以写入系统文件
-
-RUN echo 'export GOROOT=/usr/local/go' >> /etc/profile
-
-RUN echo 'export GOPATH=/work/golang' >> /etc/profile
-
-RUN echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /etc/profile
-
-RUN /bin/bash -c 'source  /etc/profile'
+WORKDIR 
 
 
 
