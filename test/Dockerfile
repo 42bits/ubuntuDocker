@@ -77,7 +77,7 @@ RUN mkdir -p redis;mkdir -p php;mkdir -p nginx;mkdir -p mysql
 
 RUN chown -R mysql:mysql mysql
 
-WORKDIR 
+WORKDIR /
 
 
 
