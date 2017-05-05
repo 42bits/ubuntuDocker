@@ -156,13 +156,9 @@ WORKDIR /soft
 
 RUN tar zxf tengine-2.2.0.tar.gz
 
-WORKDIR tengine-2.2.0
-
-RUN ./configure --prefix=/usr/local/tengine --user=www-data --group=www-data --with-zlib=/home/nginx-lib/zlib-1.2.11 --with-pcre=/home/nginx-lib/pcre-8.40 --with-openssl=/home/nginx-lib/openssl-1.0.2k
-
 #make 错误 执行make clean
 
-RUN make && make install
+RUN cd tengine-2.2.0 ; ./configure --prefix=/usr/local/tengine --user=www-data --group=www-data --with-zlib=/home/nginx-lib/zlib-1.2.11 --with-pcre=/home/nginx-lib/pcre-8.40 --with-openssl=/home/nginx-lib/openssl-1.0.2k && make && make install
 
 
 
@@ -172,15 +168,11 @@ WORKDIR /soft
 
 RUN tar zxf redis-3.2.1.tar.gz
 
-WORKDIR redis-3.2.1.tar
+RUN cd redis-3.2.1 && make
 
-RUN make
+RUN cd /soft/redis-3.2.1/src ; cp mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-rdb redis-cli redis-sentinel redis-server redis-trib.rb /usr/local/redis/sbin/
 
-WORKDIR /soft/redis-3.2.1/src/
-
-RUN cp mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-rdb redis-cli redis-sentinel redis-server redis-trib.rb /usr/local/redis/sbin/
-
-WORKDIR /soft/redis-3.2.1;
+WORKDIR /soft/redis-3.2.1
 
 RUN cp redis.conf /usr/local/redis/etc/
 
@@ -236,7 +228,9 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -D
 
 RUN make && make install
 
-WORKDIR /usr/local/mysql RUN mkdir -p etc
+WORKDIR /usr/local/mysql
+
+RUN mkdir -p etc
 
 RUN mv support-files/my-default.cnf etc/
 
