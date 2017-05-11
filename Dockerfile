@@ -9,7 +9,7 @@ EXPOSE 80
 
 EXPOSE 8080
 
-EXPOSE 3360
+EXPOSE 3306
 
 EXPOSE 6379
 
@@ -28,11 +28,13 @@ RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
 
 RUN cp sources.list /etc/apt/
 
-RUN apt-get update ; apt-get -y upgrade
+RUN apt-get update
+
+RUN apt-get -y upgrade
 
 RUN apt-get -y install zip vim git 
 
-RUN apt-get -y install gcc automake autoconf libtool make cmake libncurses5-dev build-essential
+RUN apt-get -y install gcc automake autoconf libtool make cmake libncurses5-dev build-essential ghostscript
 
 RUN apt-get -y install libxml2-dev libssl-dev libcurl4-openssl-dev pkg-config libsslcommon2-dev libbz2-dev libjpeg8-dev libpng12-dev libfreetype6-dev libmcrypt-dev psmisc
 
@@ -49,7 +51,7 @@ RUN useradd -r mysql -g mysql
 
 WORKDIR /usr/local
 
-RUN mkdir -p tengine ; mkdir -p mysql ; mkdir -p php ; mkdir -p redis/sbin ; mkdir -p redis/etc ; mkdir -p go
+RUN mkdir -p tengine ; mkdir -p mysql/etc ; mkdir -p boost ; mkdir -p php ; mkdir -p redis/sbin ; mkdir -p redis/etc ; mkdir -p go
 
 WORKDIR /home
 
@@ -146,7 +148,11 @@ RUN cp zlib-1.2.11.tar.gz pcre-8.40.tar.gz openssl-1.0.2k.tar.gz /home/nginx-lib
 
 WORKDIR /home/nginx-lib
 
-RUN tar zxf zlib-1.2.11.tar.gz;tar zxf pcre-8.40.tar.gz;tar zxf openssl-1.0.2k.tar.gz;
+RUN tar zxf zlib-1.2.11.tar.gz;tar zxf pcre-8.40.tar.gz;tar zxf openssl-1.0.2k.tar.gz
+
+WORKDIR pcre-8.40
+
+RUN autoreconf -ivf
 
 WORKDIR /home
 
@@ -190,37 +196,18 @@ RUN tar zxf go1.8.linux-amd64.tar.gz
 
 RUN cp -rf go/* /usr/local/go/
 
-#GOPATH可以挂外卷,用宿主本地的开发目录
-
-#ENV export GOROOT=/usr/local/go  
-
-#ENV export GOPATH=/work/golang
-
-#ENV export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-
-#可以使用上面也可以写入系统文件
-
-RUN echo 'export GOROOT=/usr/local/go' >> /etc/profile
-
-RUN echo 'export GOPATH=/work/golang' >> /etc/profile
-
-RUN echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /etc/profile
-
-RUN /bin/bash -c 'source  /etc/profile'
-
-
 
 #编译mysql如果编译错误 make clean;rm CMakeCache.txt
 
 WORKDIR /soft
 
-RUN tar zxf mysql-boost-5.7.17.tar.gz
+RUN cp boost_1_59_0.tar.gz /usr/loca/boost/ 
 
 RUN tar zxf mysql-boost-5.7.17.tar.gz
 
 WORKDIR mysql-5.7.17
 
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DSYSCONFDIR=/usr/local/mysql/etc  -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306  -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_UNIX_ADDR=/tmp/mysql/mysqld.sock -DEXTRA_CHARSETS=all -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DWITH_SSL:STRING=bundled -DWITH_ZLIB:STRING=bundled  -DENABLE_DOWNLOADS=1 -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/soft
+RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DSYSCONFDIR=/usr/local/mysql/etc  -DMYSQL_USER=mysql -DMYSQL_TCP_PORT=3306  -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_UNIX_ADDR=/tmp/mysql/mysqld.sock -DEXTRA_CHARSETS=all -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=1 -DENABLED_LOCAL_INFILE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DWITH_SSL:STRING=bundled -DWITH_ZLIB:STRING=bundled  -DENABLE_DOWNLOADS=1 -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/usr/local/boost/
 
 RUN make && make install
 
@@ -261,41 +248,129 @@ WORKDIR php-fpm.d
 RUN mv www.conf.default www.conf
 
 
+#可以使用上面也可以写入系统文件
+
+RUN echo 'export NGINXROOT=/usr/local/tengine' >> /etc/profile
+
+RUN echo 'export REDISROOT=/usr/local/redis' >> /etc/profile
+
+RUN echo 'export MYSQLROOT=/usr/local/mysql' >> /etc/profile
+
+RUN echo 'export PHPROOT=/usr/local/php' >> /etc/profile
+
+RUN echo 'export GOROOT=/usr/local/go' >> /etc/profile
+
+RUN echo 'export GOPATH=/work/golang' >> /etc/profile
+
+RUN echo 'export PATH=$PATH:$NGINXROOT/sbin:$REDISROOT/sbin:$MYSQLROOT/bin:$MYSQLROOT/support-files:$PHPROOT/bin:$PHPROOT/sbin:$GOROOT/bin:$GOPATH/bin' >> /etc/profile
+
+RUN /bin/bash -c 'source  /etc/profile'
+
+
 #编译php扩展
 
-#RUN unzip yaf-3.0.4.zip
+#yaf
 
-#WORKDIR /soft
+WORKDIR /soft
 
-#RUN cd yaf-3.0.4
+RUN unzip yaf-3.0.4.zip
 
-#RUN tar zxf yac-2.0.1.tar.gz
+RUN cd yaf-3.0.4
 
-#RUN cd yac-2.0.1
+RUN /usr/local/php/bin/phpize
 
-#RUN tar zxf yaconf-1.0.4.tar.gz
+RUN ./configure && make && make install
 
-#RUN cd yaconf-1.0.4
 
-#RUN tar zxf msgpack-2.0.2.tar.gz
+#yac
 
-#RUN cd msgpack-2.0.2
+WORKDIR /soft
 
-#RUN tar zxf yar-2.0.2.tar.gz
+RUN tar zxf yac-2.0.1.tar.gz
 
-#RUN cd yar-2.0.2
+RUN cd yac-2.0.1
 
-#RUN tar zxf taint-2.0.2.tar.gz
+RUN /usr/local/php/bin/phpize
 
-#RUN cd taint-2.0.2
+RUN ./configure && make && make install
 
-#RUN unzip v2.0.7.zip
 
-#RUN cd v2.0.7
+#yaconf
 
-#RUN unzip 3.1.2.zip
+WORKDIR /soft
 
-#RUN cd 3.1.2
+RUN tar zxf yaconf-1.0.4.tar.gz
+
+RUN cd yaconf-1.0.4
+
+RUN /usr/local/php/bin/phpize
+
+RUN ./configure && make && make install
+
+
+#msgpack
+
+WORKDIR /soft
+
+RUN tar zxf msgpack-2.0.2.tar.gz
+
+RUN cd msgpack-2.0.2
+
+RUN /usr/local/php/bin/phpize
+
+RUN ./configure && make && make install
+
+
+#yar
+
+WORKDIR /soft
+
+RUN tar zxf yar-2.0.2.tar.gz
+
+RUN cd yar-2.0.2
+
+RUN /usr/local/php/bin/phpize
+
+RUN ./configure && make && make install
+
+
+#taint
+
+WORKDIR /soft
+
+RUN tar zxf taint-2.0.2.tar.gz
+
+RUN cd taint-2.0.2
+
+RUN /usr/local/php/bin/phpize
+
+RUN ./configure && make && make install
+
+
+#swoole
+
+WORKDIR /soft
+
+RUN unzip v2.0.7.zip
+
+RUN cd v2.0.7
+
+RUN /usr/local/php/bin/phpize
+
+RUN ./configure && make && make install
+
+
+#redis
+
+WORKDIR /soft
+
+RUN unzip 3.1.2.zip
+
+RUN cd 3.1.2
+
+RUN /usr/local/php/bin/phpize
+
+RUN ./configure && make && make install
 
 
 
