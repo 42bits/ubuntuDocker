@@ -1,0 +1,34 @@
+version: '2'
+services:
+  web:
+    image: registry.cn-hangzhou.aliyuncs.com/jshawcx/ubuntunginxphpgoredismysql:latest
+    ports:
+      - "80:80"
+      - "8000:8000" 
+      - "8080:8080"       
+    volumes:
+      # data
+      - /home/congxi/docker/data:/data
+      # web目录
+      - /home/congxi/work:/work
+      # nginx 配置目录
+      - /home/congxi/docker/conf/nginx/conf:/usr/local/tengine/conf
+      # php 配置目录
+      - /home/congxi/docker/conf/php/etc:/usr/local/php/etc
+      # mysql 配置目录
+      - /home/congxi/docker/conf/mysql/etc:/usr/local/mysql/etc
+      # redis 配置目录
+      - /home/congxi/docker/conf/redis/etc:/usr/local/redis/etc
+      # tmp mysql配置目录
+      - /home/congxi/docker/conf/tmp/mysql:/tmp/mysql
+      # log nginx配置目录
+      - /home/congxi/docker/conf/var/log/nginx:/var/log/nginx
+      # log php配置目录
+      - /home/congxi/docker/conf/var/log/php:/var/log/php
+      # log mysql配置目录
+      - /home/congxi/docker/conf/var/log/mysql:/var/log/mysql
+      # log redis配置目录
+      - /home/congxi/docker/conf/var/log/redis:/var/log/redis
+      # 应用管理脚本
+      - /home/congxi/docker/shell:/shell
+    stdin_open: true   

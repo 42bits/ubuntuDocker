@@ -7,12 +7,6 @@ MAINTAINER jshawcx jshawcx@gmail.com
 
 EXPOSE 80
 
-EXPOSE 8080
-
-EXPOSE 3306
-
-EXPOSE 6379
-
 
 #可以修改源,安装必须软件
 

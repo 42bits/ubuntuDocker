@@ -1,3 +1,12 @@
-FROM hub.c.163.com/netease_comb/debian:7.9
+镜像0：
+Dockerfile
 
-MAINTAINER jshawcx jshawcx@gmail.com
+镜像1：
+docker pull registry.cn-hangzhou.aliyuncs.com/jshawcx/ubuntunginxphpgoredismysql
+
+镜像2：
+docker pull registry.cn-hangzhou.aliyuncs.com/jshawcx/ubunturedisphpgo
+
+不挂载 数据库 注释掉 # data
+
+
