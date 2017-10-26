@@ -9,29 +9,25 @@ EXPOSE 80
 
 
 #可以修改源,安装必须软件
+RUN buildDeps='wget zip vim git gcc automake autoconf libtool make cmake libncurses5-dev build-essential ghostscript libxml2-dev libssl-dev libcurl4-openssl-dev pkg-config libsslcommon2-dev libbz2-dev libjpeg8-dev libpng12-dev libfreetype6-dev libmcrypt-dev psmisc' \
+    
+    && apt-get update \
 
-RUN apt-get update
+    && apt-get -y install $buildDeps \
 
-RUN apt-get -y install wget
+    && wget http://mirrors.163.com/.help/sources.list.wheezy \
 
-RUN wget http://mirrors.163.com/.help/sources.list.wheezy
+    && mv sources.list.wheezy sources.list \
 
-RUN mv sources.list.wheezy sources.list
+    && mv /etc/apt/sources.list /etc/apt/sources.list.bak \
 
-RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
+    && cp sources.list /etc/apt/ \
 
-RUN cp sources.list /etc/apt/
+    && apt-get update \
 
-RUN apt-get update
-
-RUN apt-get -y upgrade
-
-RUN apt-get -y install zip vim git 
-
-RUN apt-get -y install gcc automake autoconf libtool make cmake libncurses5-dev build-essential ghostscript
-
-RUN apt-get -y install libxml2-dev libssl-dev libcurl4-openssl-dev pkg-config libsslcommon2-dev libbz2-dev libjpeg8-dev libpng12-dev libfreetype6-dev libmcrypt-dev psmisc
-
+    && apt-get -y upgrade \
+    
+    && apt-get purge -y --auto-remove $buildDeps
 
 #添加用户(www-data 好像已经有了),构建目录
 
@@ -39,9 +35,7 @@ RUN apt-get -y install libxml2-dev libssl-dev libcurl4-openssl-dev pkg-config li
 
 #RUN useradd -r -g www-data www-data
 
-RUN groupadd mysql
-
-RUN useradd -r mysql -g mysql
+RUN groupadd mysql useradd -r mysql -g mysql
 
 WORKDIR /usr/local
 
