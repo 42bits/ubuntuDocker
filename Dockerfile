@@ -47,23 +47,23 @@ RUN mkdir -p nginx-lib
 
 WORKDIR /data
 
-RUN mkdir -p mysql;mkdir -p redis
+RUN mkdir -p mysql;mkdir -p redis \
 
-RUN chown -R mysql:mysql mysql
+    && chown -R mysql:mysql mysql \
 
-RUN chmod -R 700 mysql
+    && chmod -R 700 mysql
 
 WORKDIR /tmp
 
-RUN mkdir -p mysql
+RUN mkdir -p mysql \
 
-RUN chown -R mysql:mysql mysql
+    && chown -R mysql:mysql mysql
 
 WORKDIR /var/log
 
-RUN mkdir -p redis;mkdir -p php;mkdir -p nginx;mkdir -p mysql
+RUN mkdir -p redis;mkdir -p php;mkdir -p nginx;mkdir -p mysql \
 
-RUN chown -R mysql:mysql mysql
+    && chown -R mysql:mysql mysql
 
 
 #可以先下载文件到本地,然后关联进来,为Dockerfile所在目录的相对路径
@@ -74,7 +74,7 @@ WORKDIR /soft
 
 
 
-#nginx相关
+#nginx相关(可以提前准备，用完rm掉)
 
 RUN wget http://tengine.taobao.org/download/tengine-2.2.0.tar.gz
 
@@ -86,19 +86,19 @@ RUN wget https://www.openssl.org/source/openssl-1.0.2k.tar.gz
 
 
 
-#redis相关
+#redis相关(可以提前准备，用完rm掉)
 
 RUN wget http://download.redis.io/releases/redis-3.2.1.tar.gz
 
 
 
-#golang相关
+#golang相关(可以提前准备，用完rm掉)
 
 RUN wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
 
 
 
-#mysql相关
+#mysql相关(可以提前准备，用完rm掉)
 
 RUN wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-boost-5.7.17.tar.gz
 
@@ -106,7 +106,7 @@ RUN wget http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.t
 
 
 
-#php相关
+#php相关(可以提前准备，用完rm掉)
 
 RUN wget http://jp2.php.net/distributions/php-7.1.3.tar.gz
 
