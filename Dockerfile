@@ -7,7 +7,7 @@ MAINTAINER jshawcx jshawcx@gmail.com
 
 EXPOSE 80
 
-
+#RUN 尽可能的少，多一个run就多一层，创建的镜像会很大，不需要的要删掉
 #可以修改源,安装必须软件
 RUN buildDeps='wget zip vim git gcc automake autoconf libtool make cmake libncurses5-dev build-essential ghostscript libxml2-dev libssl-dev libcurl4-openssl-dev pkg-config libsslcommon2-dev libbz2-dev libjpeg8-dev libpng12-dev libfreetype6-dev libmcrypt-dev psmisc' \
     
