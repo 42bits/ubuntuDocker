@@ -1,3 +1,5 @@
+基础镜像建议使用 alpine
+
 镜像0：
 Dockerfile
 
